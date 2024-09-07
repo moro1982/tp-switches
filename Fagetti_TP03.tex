@@ -1,0 +1,90 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage[spanish]{babel}
+
+\title{Trabajo Práctico}
+\title{Dispositivos de red - Switches}
+\author{Nicolás Fagetti}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Dispositivos activos}
+
+\textbf{Utilizando el escenario con 3 Hubs, comprobamos que efectivamente se producen colisiones en diferentes partes de la red, incluso introduciendo el retraso de 1 milisegundo.} \\
+
+\textbf{Si hacemos el mismo envio de PDUs pero en el escenario con 2 Hubs y 1 switch, veremos que los PDUs llegan a destino sin problemas, y que los mismos no se propagan fuera del dominio de colision en el que se encuentran. De esto, podemos concluir que el switch aisla o separa los dominios de colision, mientras que el Hub los extiende. En el switch, cada puerto constituye un dominio de colision, mientras que en el hub, todos sus puertos pertenecen al mismo dominio de colision.} \\
+
+\textbf{Si ahora agregamos un PDU desde la PC12 a la PC13 con 1 milisegundo de atraso (ademas de los PDUs que teniamos previamente), veremos que los mensajes que colisionan en el dominio del lado izquierdo no se propagan al lado derecho. El switch de alguna manera reconoce que mensajes replicar y cuales no.} \\
+
+\textbf{Finalmente, al conectar todos los dispositivos al mismo switch (y luego de realizar el switch learning anticipando los PDUs a enviar en modo Realtime antes de pasar al modo Simulacion), vemos que claramente los mensaje no interfieren entre si al converger en el switch, ya que este se encarga de separar cada uno en un dominio de colision diferente (1 por puerto), evitando asi que existan interferencias, para luego enviar cada uno al dispositivo destino correspondiente.} \\
+
+\section{El protocolo ARP}
+
+\textbf{Luego de efectuar el envio del mensaje PDU a traves del comando \texttt{ping -n 1 192.168.1.12} desde la consola de la PC11, examinamos el recorrido del mensaje en la simulacion y analizamos la informacion del PDU en el switch al recibir dicho mensaje. Notamos que en la capa 1, el mensaje se reenvia a los otros 7 dispositivos conectados a la red.} \\
+
+\textbf{De esto podemos responder que en la difusion Ethernet, todos los puertos del switch pertenecen al mismo dominio de difusion, por lo que podemos afirmar que expande el dominio de difusion al resto de los dispositivos de la red.} \\
+
+\underline{\textbf{Comando \texttt{arp}}} \\
+
+\textbf{Permite manipular la cache ARP del sistema. Se puede usar para agregar o eliminar entradas de asociacion de direcciones.} \\
+
+\textbf{En Linux:} \\
+\begin{itemize}
+    \item Para agregar una entrada ARP estatica: \\ \texttt{sudo arp -s <dirección-IP> <dirección-MAC>}
+    \item Para mostrar contenido de la cache ARP: \\
+    \texttt{arp -a}
+    \item Para mostrar informacion detallada: \\
+    \texttt{arp -v}
+    \item Para borrar una entrada especifica de la cache ARP: \\
+    \texttt{sudo arp -d <dirección-IP>}
+    \item Para borrar toda la cache ARP: \\
+    \texttt{sudo arp -d -a}    
+\end{itemize}
+\textbf{} \\
+
+\textbf{En Windows:} \\
+\begin{itemize}
+    \item Para agregar una entrada ARP estatica: \\
+    \texttt{arp /s <dirección-IP> <dirección-MAC>}
+    \item Para mostrar contenido de la cache ARP: \\
+    \texttt{arp /a}
+\end{itemize}
+\textbf{} \\
+
+\textbf{En Windows, este comando debe ejecutarse en modo administrador.}
+
+\textbf{En Linux, lo indicamos anteponiendo el comando \texttt{sudo.}} \\\\
+
+\textit{Cuales son las ventajas de realizar entradas estaticas en la ARP?} \\
+
+\textbf{De lo discutido en clase, concluimos que:} \\
+\begin{itemize}
+    \item La presencia de entradas estaticas permite que no haya broadcasts en la red.
+    \item La desventaja es que, al cambiar una PC, por ejemplo, tengamos que cambiar manualmente el nro de MAC en la red, ya que no hay ahora un aprendizaje dinamico.
+\end{itemize}
+\textbf{} \\
+
+\section{Switch learning}
+
+\textbf{En este apartado vimos como acceder a la tabla FIB, que almacena la informacion de los dispositivos de la red a traves de los envios de paquetes ARP. Lo hicimos a traves de la consola del switch, al que pudimos acceder directamente desde la CLI del mismo (provisto en Packet Tracer) y por medio de otro equipo externo conectado con un cable de consola. Desde el mismo, ingresamos al CISCO IOS y probamos los diferentes comandos para trabajar con la tabla FIB:} \\
+
+\begin{itemize}
+    \item Para mostrar el contenido de la tabla FIB: \\
+    \texttt{> show mac address-table}
+    \item Para acceder al modo administrador y sus privilegios de sistema: \\
+    \texttt{> enable}
+    \item Para ingresar comandos de configuracion del sistema de red: \\
+    \texttt{> configure terminal}
+    \item Para ingresar una entrada estatica y asignar al dispositivo indicado por la MAC la interfaz Ethernet deseada: \\
+    \texttt{> mac address-table static 0001.6394.A11E vlan 1 interface fastEthernet 0/4}
+\end{itemize}
+
+\newpage
+\section{Referencias}
+\begin{itemize}
+    \item Fuente del documento: https://github.com/moro1982/tp-switches
+\end{itemize}
+
+\end{document}
